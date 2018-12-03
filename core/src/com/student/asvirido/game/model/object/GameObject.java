@@ -35,6 +35,14 @@ public class GameObject {
         return (position);
     }
 
+    public float getX() {
+        return (position.x);
+    }
+
+    public float getY() {
+        return (position.y);
+    }
+
     public Vector2 getAcceleration() {
         return (acceleration);
     }
