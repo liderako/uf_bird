@@ -5,26 +5,23 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.student.asvirido.game.model.Model;
+import com.student.asvirido.game.view.AssetLoader;
 import com.student.asvirido.game.view.GameRenderer;
+import com.student.asvirido.game.view.StartRenderer;
 
 public class Controller implements Screen {
     private static Controller controller = new Controller();
     private GameRenderer gameRenderer;
+    private StartRenderer startRenderer;
     private Model model;
 
     private float runTime;
     private final float gameWidth = 136;
-
+    private String statusView = "Start";
+    private float gameHeight;
+    private int midPointY;
     public Controller() {
-        float screenWidth = Gdx.graphics.getWidth();
-        float screenHeight = Gdx.graphics.getHeight();
-        runTime = 0;
-        float gameHeight = screenHeight / (screenWidth / gameWidth);
-
-        int midPointY = (int) (gameHeight / 2);
-        model = new Model(midPointY);
-        gameRenderer = new GameRenderer((int) gameHeight, midPointY );
-        Gdx.input.setInputProcessor(new InputHandler());
+        init();
     }
 
     public static Controller getController() {
@@ -32,14 +29,36 @@ public class Controller implements Screen {
     }
 
     public void onClickBird() {
-        model.onClickBird();
+        if (statusView.equals("Game") && Model.isAlive()) {
+            model.onClickBird();
+            AssetLoader.flap.play();
+        }
+        else if (statusView.equals("Start")) {
+            statusView = "Game";
+        }
+        else if (statusView.equals("GameOver")) {
+            statusView = "Start";
+            init();
+        }
     }
 
     @Override
     public void render(float delta) {
-        runTime += delta;
-        model.update(delta);
-        gameRenderer.render(runTime);
+        if (statusView.equals("Start")) {
+            runTime += delta;
+            startRenderer.render(runTime, delta);
+        }
+        else if (statusView.equals("Game")) {
+            runTime += delta;
+            model.update(delta);
+            gameRenderer.render(runTime);
+            if (!Model.isAlive()) {
+                statusView = "GameOver";
+            }
+        }
+        else {
+            gameRenderer.render(0);
+        }
     }
 
     @Override
@@ -69,5 +88,18 @@ public class Controller implements Screen {
 
     @Override
     public void dispose() {
+    }
+
+    private void init() {
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+        runTime = 0;
+        gameHeight = screenHeight / (screenWidth / gameWidth);
+
+        midPointY = (int) (gameHeight / 2);
+        model = new Model(midPointY);
+        gameRenderer = new GameRenderer((int) gameHeight, midPointY );
+        startRenderer = new StartRenderer((int) gameHeight, midPointY );
+        Gdx.input.setInputProcessor(new InputHandler());
     }
 }

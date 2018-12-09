@@ -1,9 +1,9 @@
 package com.student.asvirido.game.model.object.type.enemy;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.student.asvirido.game.model.object.GameObjectBuilder;
+import com.student.asvirido.game.model.object.type.Bird;
 
 import java.util.Random;
 
@@ -11,6 +11,7 @@ public class Pipes extends Enemy {
     private Random random;
     private Rectangle skullUp, skullDown, barUp, barDown;
     private float groundY;
+    private boolean point = true;
 
     public static final int VERTICAL_GAP = 45;
     public static final int SKULL_WIDTH = 24;
@@ -56,25 +57,33 @@ public class Pipes extends Enemy {
         );
     }
 
+    public boolean colider(final Bird bird) {
+        if (position.x < bird.getX() + bird.getWidth()) {
+           return (Intersector.overlaps(bird.getBoundingCircle(), barUp)
+                   || Intersector.overlaps(bird.getBoundingCircle(), barDown)
+                   || Intersector.overlaps(bird.getBoundingCircle(), skullDown)
+                   || Intersector.overlaps(bird.getBoundingCircle(), skullUp));
+        }
+        return (false);
+    }
+
+    public boolean coliderPoint(final Bird bird) {
+        if (bird.getX() >= barUp.x && point && position.x <= bird.getX()) {
+            point = false;
+            return (true);
+        }
+        return (false);
+    }
+
     @Override
     public void reset(float newX) {
         super.reset(newX);
         height = random.nextInt(90) + 15;
+        point = true;
     }
 
-    public Rectangle getSkullUp() {
-        return skullUp;
+    public boolean isPoint() {
+        return (point);
     }
 
-    public Rectangle getSkullDown() {
-        return skullDown;
-    }
-
-    public Rectangle getBarUp() {
-        return barUp;
-    }
-
-    public Rectangle getBarDown() {
-        return barDown;
-    }
 }

@@ -9,9 +9,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.student.asvirido.game.model.Model;
+import com.student.asvirido.game.model.object.GameHandler;
 import com.student.asvirido.game.model.object.type.enemy.Pipes;
 
-public class GameRenderer {
+public class StartRenderer {
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
     private SpriteBatch batcher;
@@ -21,9 +22,9 @@ public class GameRenderer {
     private TextureRegion bg, grass;
     private Animation birdAnimation;
     private TextureRegion birdMid;
-    private TextureRegion skullUp, skullDown, bar;
+    private GameHandler handler;
 
-    public GameRenderer(int gameHeight, int midPointY) {
+    public StartRenderer(int gameHeight, int midPointY) {
 
         this.midPointY = midPointY;
         camera = new OrthographicCamera();
@@ -34,15 +35,16 @@ public class GameRenderer {
 
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(camera.combined);
+        handler = new GameHandler(midPointY + 66);
         initAssets();
     }
 
 
-    public void render(float runTime) {
+    public void render(float runTime, float delta) {
         blackScreen();
-
         renderShapeRenderer();
         renderTextureObjects(runTime);
+        handler.update(delta);
     }
 
     private void renderShapeRenderer() {
@@ -67,65 +69,21 @@ public class GameRenderer {
         renderBackground();
         renderBird(runTime);
         renderGrass();
-        renderPipes();
-        renderCurrentScope("" + Model.getAmountPoint());
         batcher.end();
-    }
-
-    private void renderCurrentScope(String amount) {
-        AssetLoader.shadow.draw(batcher, amount, (136 / 2) - (3 * amount.length()), 12);
-        AssetLoader.font.draw(batcher, "" + amount,
-                (136 / 2) - (3 * amount.length() - 1), 11);
     }
 
     private void renderGrass() {
         for (int i = 0; i < Model.getPipesHandler().getGrounds().size(); i++) {
             batcher.draw(
                     grass,
-                    Model.getPipesHandler().getGrounds().get(i).getX(),
-                    Model.getPipesHandler().getGrounds().get(i).getY(),
-                    Model.getPipesHandler().getGrounds().get(i).getWidth(),
-                    Model.getPipesHandler().getGrounds().get(i).getHeight()
+                    handler.getGrounds().get(i).getX(),
+                    handler.getGrounds().get(i).getY(),
+                    handler.getGrounds().get(i).getWidth(),
+                    handler.getGrounds().get(i).getHeight()
             );
         }
     }
 
-    private void renderPipes() {
-        for (int i = 0; i < Model.getPipesHandler().getPipes().size(); i++) {
-            renderBar(i);
-            batcher.draw(
-                    skullUp,
-                    Model.getPipesHandler().getPipes().get(i).getX() - 1,
-                    Model.getPipesHandler().getPipes().get(i).getY() + Model.getPipesHandler().getPipes().get(i).getHeight() - Pipes.SKULL_HEIGHT,
-                    Pipes.SKULL_WIDTH,
-                    Pipes.SKULL_HEIGHT
-            );
-            batcher.draw(
-                    skullDown,
-                    Model.getPipesHandler().getPipes().get(i).getX() - 1,
-                    Model.getPipesHandler().getPipes().get(i).getY() + Model.getPipesHandler().getPipes().get(i).getHeight() + Pipes.VERTICAL_GAP,
-                    Pipes.SKULL_WIDTH,
-                    Pipes.SKULL_HEIGHT);
-        }
-    }
-
-    private void renderBar(int i) {
-        batcher.enableBlending();
-        batcher.draw(
-                bar,
-                Model.getPipesHandler().getPipes().get(i).getX(),
-                Model.getPipesHandler().getPipes().get(i).getY(),
-                Model.getPipesHandler().getPipes().get(i).getWidth(),
-                Model.getPipesHandler().getPipes().get(i).getHeight()
-        );
-        batcher.draw(
-                bar,
-                Model.getPipesHandler().getPipes().get(i).getX(),
-                Model.getPipesHandler().getPipes().get(i).getY() + Model.getPipesHandler().getPipes().get(i).getHeight() + Pipes.VERTICAL_GAP,
-                Model.getPipesHandler().getPipes().get(i).getWidth(),
-                midPointY + 66 - (Model.getPipesHandler().getPipes().get(i).getHeight() + Pipes.VERTICAL_GAP)
-        );
-    }
 
     private void renderBackground() {
         batcher.disableBlending();
@@ -134,21 +92,6 @@ public class GameRenderer {
 
     private void renderBird(float runTime) {
         batcher.enableBlending();
-        if (Model.getBird().shouldntFlap()) {
-            batcher.draw(
-                    birdMid,
-                    Model.getBird().getX(),
-                    Model.getBird().getY(),
-                    Model.getBird().getWidth() / 2.0f,
-                    Model.getBird().getHeight() / 2.0f,
-                    Model.getBird().getWidth(),
-                    Model.getBird().getHeight(),
-                    1,
-                    1,
-                    Model.getBird().getRotation()
-            );
-        }
-        else {
             batcher.draw(
                     (TextureRegion) birdAnimation.getKeyFrame(runTime),
                     Model.getBird().getX(),
@@ -161,7 +104,6 @@ public class GameRenderer {
                     1,
                     Model.getBird().getRotation()
             );
-        }
     }
 
     private void blackScreen() {
@@ -174,9 +116,6 @@ public class GameRenderer {
         grass = AssetLoader.grass;
         birdAnimation = AssetLoader.birdAnimation;
         birdMid = AssetLoader.bird;
-        skullUp = AssetLoader.skullUp;
-        skullDown = AssetLoader.skullDown;
-        bar = AssetLoader.bar;
     }
 
 }

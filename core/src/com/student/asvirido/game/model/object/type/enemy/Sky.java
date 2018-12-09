@@ -1,16 +1,18 @@
 package com.student.asvirido.game.model.object.type.enemy;
 
+import com.badlogic.gdx.Gdx;
 import com.student.asvirido.game.model.object.GameObjectBuilder;
 import com.student.asvirido.game.model.object.type.Bird;
 
-public class Ground extends Enemy {
+public class Sky extends Enemy {
 
-    public Ground(final GameObjectBuilder gameObjectBuilder) {
+    public Sky(final GameObjectBuilder gameObjectBuilder) {
         super(gameObjectBuilder);
     }
 
     public boolean colider(final Bird bird) {
-        if (position.y < bird.getY() + bird.getHeight() - 1) {
+        Gdx.app.log("a", "b");
+        if (position.y > bird.getY() + bird.getHeight()) {
             return (true);
         }
         return (false);

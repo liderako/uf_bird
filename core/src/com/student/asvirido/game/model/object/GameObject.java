@@ -31,20 +31,12 @@ public class GameObject {
         return (speed);
     }
 
-    public Vector2 getPosition() {
-        return (position);
-    }
-
     public float getX() {
         return (position.x);
     }
 
     public float getY() {
         return (position.y);
-    }
-
-    public Vector2 getAcceleration() {
-        return (acceleration);
     }
 
     public String getType() {
