@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -23,6 +24,7 @@ public class StartRenderer {
     private Animation birdAnimation;
     private TextureRegion birdMid;
     private GameHandler handler;
+    BitmapFont font, shadow;
 
     public StartRenderer(int gameHeight, int midPointY) {
 
@@ -36,6 +38,8 @@ public class StartRenderer {
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(camera.combined);
         handler = new GameHandler(midPointY + 66);
+        font = new BitmapFont();
+        shadow = new BitmapFont();
         initAssets();
     }
 
@@ -69,7 +73,13 @@ public class StartRenderer {
         renderBackground();
         renderBird(runTime);
         renderGrass();
+        text();
         batcher.end();
+    }
+
+    private void text() {
+        AssetLoader.shadow.draw(batcher, "start", 136 / 3,25);
+        AssetLoader.font.draw(batcher, "start", 136 / 3,25);
     }
 
     private void renderGrass() {
@@ -116,6 +126,8 @@ public class StartRenderer {
         grass = AssetLoader.grass;
         birdAnimation = AssetLoader.birdAnimation;
         birdMid = AssetLoader.bird;
+        font = AssetLoader.font;
+        shadow = AssetLoader.shadow;
     }
 
 }
