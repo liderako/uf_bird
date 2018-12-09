@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.student.asvirido.game.controller.Controller;
 import com.student.asvirido.game.model.Model;
 import com.student.asvirido.game.model.object.type.enemy.Pipes;
 
@@ -22,12 +23,12 @@ public class GameRenderer {
     private Animation birdAnimation;
     private TextureRegion birdMid;
     private TextureRegion skullUp, skullDown, bar;
-
+    private int viewPortWidth = 136;
     public GameRenderer(int gameHeight, int midPointY) {
 
         this.midPointY = midPointY;
         camera = new OrthographicCamera();
-        camera.setToOrtho(true, 136, gameHeight);
+        camera.setToOrtho(true, viewPortWidth, gameHeight);
 
         batcher = new SpriteBatch();
         batcher.setProjectionMatrix(camera.combined);
@@ -69,13 +70,24 @@ public class GameRenderer {
         renderGrass();
         renderPipes();
         renderCurrentScope("" + Model.getAmountPoint());
+        if (Controller.getController().getStatusView().equals("GameOver")) {
+            renderGameOver();
+        }
         batcher.end();
     }
 
     private void renderCurrentScope(String amount) {
-        AssetLoader.shadow.draw(batcher, amount, (136 / 2) - (3 * amount.length()), 12);
+        AssetLoader.shadow.draw(batcher, amount, (viewPortWidth / 2) - (3 * amount.length()), 12);
         AssetLoader.font.draw(batcher, "" + amount,
-                (136 / 2) - (3 * amount.length() - 1), 11);
+                (viewPortWidth / 2) - (3 * amount.length() - 1), 11);
+    }
+
+    private void renderGameOver() {
+        AssetLoader.shadow.draw(batcher, "Game Over", viewPortWidth / 6,50);
+        AssetLoader.font.draw(batcher, "Game Over", viewPortWidth / 6,50);
+
+        AssetLoader.shadow.draw(batcher, "Try again?", viewPortWidth / 6,70);
+        AssetLoader.font.draw(batcher, "Try again?", viewPortWidth / 6,70);
     }
 
     private void renderGrass() {
@@ -129,7 +141,7 @@ public class GameRenderer {
 
     private void renderBackground() {
         batcher.disableBlending();
-        batcher.draw(AssetLoader.bg, 0, midPointY + 23, 136, 43);
+        batcher.draw(AssetLoader.bg, 0, midPointY + 23, viewPortWidth, 43);
     }
 
     private void renderBird(float runTime) {

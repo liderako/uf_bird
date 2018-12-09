@@ -41,10 +41,6 @@ public class Model {
         return (gameHandler);
     }
 
-    static public void savePoint() {
-        Gdx.app.log("Mode:", "save point");
-    }
-
     static public boolean isAlive() {
         return (alive);
     }

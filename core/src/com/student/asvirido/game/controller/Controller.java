@@ -102,4 +102,8 @@ public class Controller implements Screen {
         startRenderer = new StartRenderer((int) gameHeight, midPointY );
         Gdx.input.setInputProcessor(new InputHandler());
     }
+
+    public String getStatusView() {
+        return statusView;
+    }
 }
